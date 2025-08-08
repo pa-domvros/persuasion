@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Persuasive Writing — Interactive (Tabs)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green:#2e7d32;
+      --green-dark:#1b5e20;
+      --yellow:#ffeb3b;
+      --yellow-deep:#fdd835;
+      --cream:#fffdf3;
+      --ink:#0f172a;
+      --muted:#475569;
+      --card:#ffffff;
+      --shadow:0 8px 24px rgba(0,0,0,.12);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}
+    header{
+      position:sticky;top:0;z-index:20;
+      background:linear-gradient(90deg,var(--green),var(--green-dark));
+      color:#fff;border-bottom:4px solid var(--yellow);
+      box-shadow:var(--shadow);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    /* HALVED header height: tighter hero, smaller type, smaller poster */
+    .hero{
+      display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center;
+      padding:8px 0;
+    }
+    .title-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--yellow);color:#000;font-weight:800;border-radius:999px;
+      padding:6px 10px;box-shadow:var(--shadow);
+      letter-spacing:.3px;font-size:.8rem;text-transform:none;
+    }
+    h1{
+      font-family:Poppins,Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-weight:900;letter-spacing:.8px;line-height:1.05;margin:.25rem 0 .6rem;
+      font-size:clamp(1.4rem,3vw,2.2rem);
+      color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.12);
+    }
+    .hero p{color:#e6f5e6;font-size:.95rem;margin:0}
+    .poster{
+      background:conic-gradient(from 30deg at 50% 50%, #a5d6a7, #fff59d, #a5d6a7);
+      border-radius:16px;padding:12px;border:3px solid var(--yellow);box-shadow:var(--shadow);
+      display:grid;place-items:center;min-height:120px;
+    }
+    .poster h2{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-weight:800;letter-spacing:.2px;text-transform:none;
+      background:#fff;padding:6px 10px;border-radius:10px;border:2px solid var(--green-dark);
+      transform:none;font-size:clamp(.9rem,1.8vw,1.05rem);color:#0f172a;
+      text-align:center
+    }
+
+    /* Tab Bar (traditional tabs) — adjusted offset for smaller header */
+    .tabs{
+      position:sticky;top:60px;z-index:15;
+      background:#fff;border-bottom:3px solid var(--yellow);box-shadow:var(--shadow);
+    }
+    .tabs .wrap{display:flex;gap:10px;flex-wrap:wrap}
+    .tab-btn{
+      appearance:none;border:none;background:#f1f5f9;color:var(--ink);padding:8px 12px;border-radius:999px;
+      font-weight:700;cursor:pointer;transition:.2s transform,.2s background; letter-spacing:.2px;font-size:.95rem;
+    }
+    .tab-btn[data-active="true"]{background:var(--yellow);}
+    .tab-btn:hover{transform:translateY(-1px)}
+    main{padding-top:10px}
+    .panel{display:none}
+    .panel[aria-hidden="false"]{display:block}
+
+    /* Sections + cards */
+    section{padding:26px 0}
+    h3.section-title{
+      font-family:Poppins;font-weight:900;font-size:clamp(1.2rem,2.2vw,1.6rem);
+      margin:0 0 14px;display:flex;align-items:center;gap:10px;
+    }
+    .pill{display:inline-block;background:var(--yellow);color:#000;font-weight:800;padding:2px 10px;border-radius:999px;margin-left:6px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{
+      grid-column:span 12;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:16px;border:3px solid #0f111400;transition:transform .2s;
+    }
+    .card:hover{transform:translateY(-2px)}
+    @media(min-width:780px){
+      .card.half{grid-column:span 6}
+      .card.third{grid-column:span 4}
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:var(--green-dark);
+      border:2px solid var(--green);padding:6px 10px;border-radius:999px;font-weight:800;text-transform:uppercase;
+      letter-spacing:.5px
+    }
+    .big-word{
+      font-family:Poppins;font-weight:900;font-size:1.45rem;letter-spacing:1.5px;margin:4px 0 8px;color:var(--green-dark)
+    }
+    .list{margin:8px 0 0;padding-left:18px}
+    .list li{margin:.3rem 0}
+    .tip{
+      background:linear-gradient(180deg,#fff,#fffde7);
+      border:2px dashed var(--yellow-deep);padding:12px;border-radius:12px;font-size:.92rem
+    }
+
+    /* Carousel */
+    .carousel{
+      position:relative;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);
+      border:3px solid var(--yellow);background:#fff;
+    }
+    .slides{display:flex;transition:transform .35s ease}
+    .slide{min-width:100%;padding:18px}
+    .controls{position:absolute;inset:auto 10px 10px 10px;display:flex;justify-content:space-between;gap:10px}
+    .ctrl{background:var(--green);border:none;color:#fff;font-weight:800;border-radius:12px;padding:8px 12px;cursor:pointer}
+    .dotbar{display:flex;gap:6px;justify-content:center;margin-top:8px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1}
+    .dot[data-active="true"]{background:var(--green)}
+
+    /* Practice */
+    .practice{
+      background:linear-gradient(180deg,#fff,#e8f5e9);
+      border:4px solid var(--green);border-radius:20px;padding:14px;box-shadow:var(--shadow)
+    }
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+    .toolbar .stat{font-weight:800}
+    .q{
+      background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:12px;margin:10px 0
+    }
+    .q .stem{font-weight:700}
+    .choices{display:grid;gap:8px;margin-top:8px}
+    .choices button{
+      text-align:left;border:2px solid #cbd5e1;background:#f8fafc;border-radius:12px;padding:8px;
+      cursor:pointer;font-weight:600
+    }
+    .choices button[data-correct="true"][data-picked="true"]{border-color:#16a34a;background:#dcfce7}
+    .choices button[data-correct="false"][data-picked="true"]{border-color:#b91c1c;background:#fee2e2}
+    .explain{color:#0f5132;background:#d1fae5;border-left:4px solid #16a34a;padding:8px;border-radius:8px;margin-top:6px;display:none}
+    .explain.show{display:block}
+    .actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .btn{
+      border:none;border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer;
+      background:var(--green);color:#fff;box-shadow:var(--shadow)
+    }
+    .btn.secondary{background:#0ea5e9}
+    .btn.warning{background:#f59e0b}
+    footer{padding:22px 0;color:var(--muted);text-align:center}
+    .credits{font-family:Poppins;font-weight:900}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <span class="title-badge">pa.domvros@gmail.com</span>
+        <h1>PERSUASIVE <span style="color:var(--yellow)">WRITING</span></h1>
+        <p>Use language skillfully to convince an audience to agree with an opinion or take a specific action.</p>
+      </div>
+      <div class="poster" aria-hidden="true">
+        <h2>Devised by Panagiotis Domvros, English and Drama Teacher, 2025</h2>
+      </div>
+    </div>
+  </header>
+
+  <!-- Traditional Tabs -->
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <div class="wrap">
+      <button class="tab-btn" role="tab" aria-controls="intro" aria-selected="true" data-active="true">Overview</button>
+      <button class="tab-btn" role="tab" aria-controls="logos" aria-selected="false">Logos</button>
+      <button class="tab-btn" role="tab" aria-controls="pathos" aria-selected="false">Pathos</button>
+      <button class="tab-btn" role="tab" aria-controls="ethos" aria-selected="false">Ethos</button>
+      <button class="tab-btn" role="tab" aria-controls="examples" aria-selected="false">Examples</button>
+      <button class="tab-btn" role="tab" aria-controls="practice" aria-selected="false">Practice</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <!-- Panels -->
+    <section id="intro" class="panel" role="tabpanel" aria-hidden="false">
+      <h3 class="section-title">What is Persuasive Writing? <span class="pill">Overview</span></h3>
+      <div class="grid">
+        <article class="card half">
+          <p>Persuasive writing is when you use your language skill to convince someone to agree with your opinion or take a specific action.</p>
+          <div class="tip" role="note">
+            <strong>Tip:</strong> We can appeal to people in different ways. The three persuasive appeals are <strong>Logos</strong>, <strong>Pathos</strong>, and <strong>Ethos</strong>.
+          </div>
+        </article>
+        <article class="card half" aria-labelledby="three-appeals">
+          <div class="badge" id="three-appeals">The Three Appeals</div>
+          <div class="big-word">LOGOS • PATHOS • ETHOS</div>
+          <ul class="list">
+            <li><strong>Logos</strong> — appeals to logic and reasoning.</li>
+            <li><strong>Pathos</strong> — appeals to emotions and ideals.</li>
+            <li><strong>Ethos</strong> — appeals to credibility and trust.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="logos" class="panel" role="tabpanel" aria-hidden="true">
+      <h3 class="section-title">Logos <span class="pill">Appeals to Logic</span></h3>
+      <div class="grid">
+        <article class="card half">
+          <div class="badge">How does it work?</div>
+          <p>It encourages people to think rationally and use their logic. It strengthens an argument by using factual information.</p>
+        </article>
+        <article class="card half">
+          <div class="badge">Writing strategies</div>
+          <ul class="list">
+            <li>Use quotes from experts on the topic.</li>
+            <li>Mention well-known theories or facts.</li>
+            <li>Include reliable sources for data and statistics.</li>
+            <li>Use real-life examples to make the topic relatable.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="pathos" class="panel" role="tabpanel" aria-hidden="true">
+      <h3 class="section-title">Pathos <span class="pill">Appeals to Emotion</span></h3>
+      <div class="grid">
+        <article class="card half">
+          <div class="badge">How does it work?</div>
+          <p>It makes the audience feel specific emotions—often fear, sadness, sympathy, happiness, or anger. It also supports ideals the audience strongly values.</p>
+        </article>
+        <article class="card half">
+          <div class="badge">Writing strategies</div>
+          <ul class="list">
+            <li>Use emotionally charged language and tone.</li>
+            <li>Mention anecdotes and stories.</li>
+            <li>Use vivid descriptions to paint a picture for your audience.</li>
+            <li>Use figurative language (simile, metaphor, hyperbole, etc.).</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="ethos" class="panel" role="tabpanel" aria-hidden="true">
+      <h3 class="section-title">Ethos <span class="pill">Appeals to Credibility</span></h3>
+      <div class="grid">
+        <article class="card half">
+          <div class="badge">How does it work?</div>
+          <p>It builds trust and respect between the writer and the audience, strengthening the argument by establishing credibility.</p>
+        </article>
+        <article class="card half">
+          <div class="badge">Writing strategies</div>
+          <ul class="list">
+            <li>Use appropriate language, spelling, punctuation, and grammar to build personal credibility.</li>
+            <li>Reference credible sources of information.</li>
+            <li>Mention relevant awards and achievements.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="examples" class="panel" role="tabpanel" aria-hidden="true">
+      <h3 class="section-title">Examples <span class="pill">Logos • Pathos • Ethos</span></h3>
+      <div class="carousel" aria-roledescription="carousel">
+        <div class="slides" id="slides">
+          <!-- LOGOS -->
+          <div class="slide">
+            <h4>Logos — Awards &amp; Achievements</h4>
+            <p><em>“Our school's recycling program won a national award for reducing waste!”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Logos — Facts &amp; Statistics</h4>
+            <p><em>“Recycling a single aluminium can saves enough energy to run a TV for 3 hours.”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Logos — Reliable Data</h4>
+            <p><em>“A 2023 report found that over 2 million plastic bottles are sold globally every minute.”</em></p>
+          </div>
+          <!-- PATHOS -->
+          <div class="slide">
+            <h4>Pathos — Appeals to Ideals</h4>
+            <p><em>“Wouldn't it be amazing to save a group of adorable panda cubs by supporting conservation efforts?”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Pathos — Emotionally Charged Language</h4>
+            <p><em>“Imagine walking past lonely animals at the shelter, their eyes filled with hope and longing for a loving home.”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Pathos — Figurative Language</h4>
+            <p><em>“This new fruit juice isn't just good; it's like a party for your taste buds!”</em></p>
+          </div>
+          <!-- ETHOS -->
+          <div class="slide">
+            <h4>Ethos — Referencing Credible Sources</h4>
+            <p><em>“According to marine biologists, using reusable bottles keeps harmful plastic out of our oceans.”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Ethos — Building Personal Credibility</h4>
+            <p><em>“As the student council president, I understand the importance of listening to everyone's voice.”</em></p>
+          </div>
+          <div class="slide">
+            <h4>Ethos — Awards &amp; Achievements</h4>
+            <p><em>“Our school's recycling program won a national award for reducing waste!”</em></p>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="ctrl" id="prev" aria-label="Previous">‹ Prev</button>
+          <button class="ctrl" id="next" aria-label="Next">Next ›</button>
+        </div>
+        <div class="dotbar" id="dots" aria-hidden="true"></div>
+      </div>
+      <p style="margin-top:10px;color:var(--muted);font-size:.95rem">Use the buttons to browse examples. Great persuasive writing often blends appeals depending on your audience and goal—so experiment!</p>
+    </section>
+
+    <!-- BIG PRACTICE -->
+    <section id="practice" class="panel" role="tabpanel" aria-hidden="true">
+      <h3 class="section-title">Practice <span class="pill">Logos • Pathos • Ethos</span></h3>
+      <div class="practice" id="practiceBox">
+        <div class="toolbar">
+          <button class="btn" id="newSet">🧩 New 10-question set</button>
+          <button class="btn secondary" id="showAnswers">Reveal all answers</button>
+          <button class="btn warning" id="reset">Reset</button>
+          <span class="stat" id="progress">0 / 10 answered</span>
+          <span class="stat" id="score">Score: 0</span>
+        </div>
+        <div id="questionList"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p class="credits">Devised by <strong>Panagiotis Domvros</strong>, English and Drama Teacher, 2025</p>
+      <p style="margin:8px 0 0"><small>Designed to echo the green &amp; yellow illustrative style of the original slide deck.</small></p>
+    </div>
+  </footer>
+
+  <script>
+    // TAB LOGIC (traditional, no scrolling)
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.panel');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.tab-btn[data-active="true"]')?.setAttribute('data-active','false');
+        tabButtons.forEach(b=>b.setAttribute('aria-selected','false'));
+        btn.setAttribute('data-active','true');
+        btn.setAttribute('aria-selected','true');
+
+        const id = btn.getAttribute('aria-controls');
+        panels.forEach(p => p.setAttribute('aria-hidden','true'));
+        document.getElementById(id).setAttribute('aria-hidden','false');
+      });
+    });
+
+    // Carousel
+    const slides = document.getElementById('slides');
+    const slideCount = slides.children.length;
+    let index = 0;
+    const dotsWrap = document.getElementById('dots');
+    for(let i=0;i<slideCount;i++){
+      const d=document.createElement('div');d.className='dot';if(i===0)d.dataset.active=true;
+      d.addEventListener('click',()=>goTo(i));dotsWrap.appendChild(d);
+    }
+    function goTo(i){
+      index = (i+slideCount)%slideCount;
+      slides.style.transform = `translateX(-${index*100}%)`;
+      document.querySelector('.dot[data-active="true"]')?.removeAttribute('data-active');
+      dotsWrap.children[index].dataset.active=true;
+    }
+    document.getElementById('prev').addEventListener('click',()=>goTo(index-1));
+    document.getElementById('next').addEventListener('click',()=>goTo(index+1));
+
+    // PRACTICE — Large randomized bank (same as prior version)
+    const BANK = [
+      {stem:'Which option uses Pathos most clearly?', choices:[
+        {t:'Experts agree this policy reduces costs by 12%.', ok:false},
+        {t:'Picture families finally sleeping safely at night because streets are lit and secure.', ok:true, why:'It evokes safety and relief — emotions.'},
+        {t:'According to the city’s 2024 budget, lighting costs fell by 12%.', ok:false}
+      ]},
+      {stem:'Choose the sentence that appeals to emotion (Pathos).', choices:[
+        {t:'A longitudinal study reports a 7% improvement.', ok:false},
+        {t:'Imagine your grandparents smiling as they video-call you with crystal-clear sound.', ok:true, why:'Creates an emotional image of joy and connection.'},
+        {t:'The device supports Wi-Fi 6 and Bluetooth 5.3.', ok:false}
+      ]},
+      {stem:'Which option shows Ethos?', choices:[
+        {t:'As a nurse with 10 years’ experience, I recommend regular hydration checks.', ok:true, why:'Credentials build credibility (Ethos).'},
+        {t:'Drinking water helps cells function efficiently.', ok:false},
+        {t:'Think of your body as a wilting plant craving water.', ok:false}
+      ]},
+      {stem:'Pick the sentence built on credibility (Ethos).', choices:[
+        {t:'According to the latest census, the area grew 3.2%.', ok:false},
+        {t:'Our team of certified electricians guarantees a safe installation.', ok:true, why:'References qualifications and trust.'},
+        {t:'Let’s make homes feel warm again.', ok:false}
+      ]},
+      {stem:'Which option relies on Logos?', choices:[
+        {t:'Join us—because every voice matters.', ok:false},
+        {t:'Let’s finally give future generations the planet they deserve.', ok:false},
+        {t:'A meta-analysis of 30 studies shows emissions drop 18% after policy adoption.', ok:true, why:'Data + studies appeal to logic.'}
+      ]},
+      {stem:'Select the most logical, evidence-based statement (Logos).', choices:[
+        {t:'You’ll love how it feels.', ok:false},
+        {t:'Clinical trials with 2,000 participants showed a 23% reduction in symptoms.', ok:true, why:'Uses quantified evidence and trials.'},
+        {t:'Think about your family.', ok:false}
+      ]},
+      {stem:'Identify the appeal type: “As a nationally awarded teacher, I suggest this reading plan.”', choices:[
+        {t:'Pathos', ok:false},
+        {t:'Ethos', ok:true, why:'Award/authority -> credibility.'},
+        {t:'Logos', ok:false}
+      ]},
+      {stem:'Identify the appeal type: “Every minute, 2 million plastic bottles are sold worldwide.”', choices:[
+        {t:'Logos', ok:true, why:'Quantified fact/statistic.'},
+        {t:'Pathos', ok:false},
+        {t:'Ethos', ok:false}
+      ]},
+      {stem:'Identify the appeal type: “Imagine a classroom where no one feels left out.”', choices:[
+        {t:'Pathos', ok:true, why:'Invokes empathy and inclusion.'},
+        {t:'Ethos', ok:false},
+        {t:'Logos', ok:false}
+      ]},
+      {stem:'Best rewrite for Pathos:', choices:[
+        {t:'Attendance increased by 6% year-over-year.', ok:false},
+        {t:'Think of the spark in a child’s eyes when they finally feel included.', ok:true, why:'Emotion and imagery.'},
+        {t:'Peer-reviewed studies confirm the hypothesis.', ok:false}
+      ]},
+      {stem:'Best rewrite for Ethos:', choices:[
+        {t:'Our award-winning faculty has guided 500+ students to scholarships.', ok:true, why:'Awards + track record = credibility.'},
+        {t:'Students deserve better.', ok:false},
+        {t:'Data shows a 14% boost.', ok:false}
+      ]},
+      {stem:'Best rewrite for Logos:', choices:[
+        {t:'It just feels right.', ok:false},
+        {t:'Survey results from 1,200 residents indicate 78% support for the plan.', ok:true, why:'Survey + percentage = Logos.'},
+        {t:'Make the city smile again.', ok:false}
+      ]},
+      {stem:'Which blends Ethos and Logos most effectively?', choices:[
+        {t:'Trust me, I care about this city.', ok:false},
+        {t:'As a licensed architect, I recommend the design because wind-tunnel tests reduced drag by 14%.', ok:true, why:'Credentials (Ethos) + data (Logos).'},
+        {t:'Think of the skyline at sunset.', ok:false}
+      ]},
+      {stem:'Which sentence is NOT Pathos?', choices:[
+        {t:'Picture the relief of debt-free graduation.', ok:false},
+        {t:'A government audit found a 9.4% variance in allocations.', ok:true, why:'Audit/variance = Logos, not Pathos.'},
+        {t:'Imagine your first step into a safe home.', ok:false}
+      ]},
+      {stem:'School context: pick Logos.', choices:[
+        {t:'Attendance records show a 12% jump after implementing breakfast club.', ok:true, why:'Records and percentage.'},
+        {t:'We should make mornings happier.', ok:false},
+        {t:'As head prefect, I promise fairness.', ok:false}
+      ]},
+      {stem:'Community context: pick Ethos.', choices:[
+        {t:'Our certified volunteers complete background checks and first-aid training.', ok:true, why:'Certification + training.'},
+        {t:'Everyone will feel proud.', ok:false},
+        {t:'Reports list 5 metrics.', ok:false}
+      ]},
+      {stem:'Product context: pick Pathos.', choices:[
+        {t:'Imagine opening a box and feeling instantly at home.', ok:true, why:'Emotion + sensory imagery.'},
+        {t:'ISO-9001 compliance verified.', ok:false},
+        {t:'Lab tests confirm 99.1% purity.', ok:false}
+      ]}
+    ];
+
+    const questionList = document.getElementById('questionList');
+    const progressEl = document.getElementById('progress');
+    const scoreEl = document.getElementById('score');
+    const newSetBtn = document.getElementById('newSet');
+    const showBtn = document.getElementById('showAnswers');
+    const resetBtn = document.getElementById('reset');
+
+    let pickedCount = 0, score = 0, currentSet = [];
+
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+    function sampleBank(n){
+      const pool = shuffle([...BANK]);
+      return pool.slice(0, n);
+    }
+
+    function renderSet(){
+      questionList.innerHTML = '';
+      currentSet.forEach((q, qi) => {
+        const box = document.createElement('div');
+        box.className = 'q';
+        const stem = document.createElement('div');
+        stem.className = 'stem';
+        stem.textContent = `Q${qi+1}. ${q.stem}`;
+        const choices = document.createElement('div');
+        choices.className = 'choices';
+
+        const explain = document.createElement('div');
+        explain.className = 'explain';
+        const good = q.choices.find(c=>c.ok);
+        explain.textContent = good?.why ? `Why: ${good.why}` : '';
+
+        q.choices.forEach((c, ci) => {
+          const btn = document.createElement('button');
+          btn.textContent = c.t;
+          if(c.ok) btn.dataset.correct = true;
+          btn.addEventListener('click', () => {
+            if(btn.dataset.picked === 'true') return;
+            // Lock siblings
+            choices.querySelectorAll('button').forEach(b => b.dataset.picked = 'false');
+            btn.dataset.picked = 'true';
+            pickedCount += 1;
+            if(c.ok){ score += 1; explain.classList.add('show'); }
+            updateHUD();
+          });
+          choices.appendChild(btn);
+        });
+
+        box.appendChild(stem);
+        box.appendChild(choices);
+        box.appendChild(explain);
+        questionList.appendChild(box);
+      });
+      pickedCount = 0; score = 0; updateHUD();
+    }
+
+    function updateHUD(){
+      progressEl.textContent = `${Math.min(pickedCount, currentSet.length)} / ${currentSet.length} answered`;
+      scoreEl.textContent = `Score: ${score}`;
+    }
+
+    function newSet(){
+      currentSet = sampleBank(10);
+      renderSet();
+    }
+
+    newSetBtn.addEventListener('click', newSet);
+    showBtn.addEventListener('click', () => {
+      // reveal: mark correct for all
+      document.querySelectorAll('.q').forEach(q => {
+        const ok = q.querySelector('button[data-correct="true"]');
+        ok.dataset.picked = 'true';
+        q.querySelector('.explain')?.classList.add('show');
+      });
+      pickedCount = currentSet.length;
+      score = currentSet.length;
+      updateHUD();
+    });
+    resetBtn.addEventListener('click', renderSet);
+
+    // init
+    currentSet = sampleBank(10);
+    renderSet();
+  </script>
+</body>
+</html>
